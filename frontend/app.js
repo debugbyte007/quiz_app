@@ -1,4 +1,4 @@
-const API_BASE = "/api";
+const API_BASE = "https://quiz-app-sdc.onrender.com/api";
 
 async function apiRequest(path, method = "GET", body) {
   const opts = {
