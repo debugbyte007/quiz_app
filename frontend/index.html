@@ -2,34 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz App - Home</title>
+  <title>QuizMaster · Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Make sure this matches your CSS filename -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1 class="app-title">QuizMaster</h1>
-
-    <section id="welcome-section" class="hidden">
-      <h2 id="welcome-text"></h2>
-      <label>
-        Name / Team Name:
-        <input id="display-name" placeholder="Your name or team" />
-      </label>
-      <button id="btn-save-name">Save Name</button>
-      <p class="hint">Name is stored locally and used on leaderboard.</p>
-
-      <div class="mode-select">
-        <button id="btn-host">Host a Quiz</button>
-        <button id="btn-join">Join a Quiz</button>
-        <button id="btn-history">View My History</button>
-        <button id="btn-logout">Logout</button>
+    <!-- Top header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Live quiz control panel · Student Development Cell
+        </p>
       </div>
-      <p id="home-message" class="message"></p>
-    </section>
-    <section id="loading-section">
-      <p>Checking your session...</p>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="text-align:right; font-size:0.9rem;">
+          <div id="welcome-text" style="font-weight:600;">Welcome</div>
+          <div style="color:#9ca3af;">Signed in</div>
+        </div>
+        <button id="btn-logout" class="secondary">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Status / loading bar -->
+    <div id="loading-section" class="status-bar">
+      <span>Checking your session...</span>
+      <span style="color:#9ca3af; font-size:0.85rem;">Please wait</span>
+    </div>
+
+    <!-- Main content shown after auth -->
+    <section id="welcome-section" class="section-card hidden">
+      <div class="stats-row">
+        <!-- Left: profile & name -->
+        <div class="stat-card">
+          <span class="stat-label">Participant profile</span>
+          <span class="stat-value" id="display-name-title">
+            Your display name
+          </span>
+          <p class="hint" style="margin-top:6px;">
+            This name is shown on leaderboards and results.
+          </p>
+          <div class="form-group" style="margin-top:10px;">
+            <label for="display-name">Display name</label>
+            <input
+              id="display-name"
+              class="full"
+              type="text"
+              placeholder="Enter the name to show on screen"
+            />
+          </div>
+          <button id="btn-save-name" class="secondary full">
+            Save display name
+          </button>
+          <div id="home-message" class="message"></div>
+        </div>
+
+        <!-- Right: quick actions -->
+        <div>
+          <div class="section-card">
+            <h3 style="margin-bottom:8px;">Quick actions</h3>
+            <p class="hint">Choose what you want to do right now.</p>
+
+            <div class="footer-actions" style="margin-top:12px;">
+              <button id="btn-host" class="primary">
+                Host a quiz
+              </button>
+              <button id="btn-join" class="secondary">
+                Join a quiz
+              </button>
+              <button id="btn-history" class="secondary">
+                My history
+              </button>
+            </div>
+          </div>
+
+          <div class="section-card" style="margin-top:12px;">
+            <h3 style="margin-bottom:6px;">Event info</h3>
+            <ul class="pill-list" style="margin-top:6px;">
+              <li>Live rounds</li>
+              <li>Auto scoring</li>
+              <li>Leaderboard view</li>
+              <li>Multiple devices</li>
+            </ul>
+            <p class="hint" style="margin-top:8px;">
+              Use <strong>Host</strong> if you are an organizer or quiz master.
+              Use <strong>Join</strong> if you are a participant with a code.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
+
   <script src="api.js"></script>
   <script src="app.js"></script>
 </body>

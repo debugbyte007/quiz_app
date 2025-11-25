@@ -2,28 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Join Quiz</title>
+  <title>QuizMaster · Join a Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Join a Quiz</h1>
-    <a href="index.html">&larr; Back Home</a>
+    <!-- Top header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Join a live quiz session with a 5-digit code
+        </p>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="window.location.href='index.html'" class="secondary">
+          Back to dashboard
+        </button>
+      </div>
+    </header>
 
-    <label>
-      Enter 5-digit quiz code:
-      <input id="quiz-code-input" maxlength="5" />
-    </label>
-    <button id="btn-join-quiz" class="primary">Join</button>
-    <p id="join-message" class="message"></p>
+    <!-- Main join card -->
+    <section class="section-card">
+      <h2 style="margin-bottom:6px;">Join quiz</h2>
+      <p class="hint" style="margin-bottom:12px;">
+        Enter the 5-digit code shared by the host. You must be logged in with your event account.
+      </p>
 
-    <section id="waiting-section" class="hidden">
-      <h2>Waiting Room</h2>
-      <p>Waiting for host to start the quiz...</p>
-      <p>Quiz: <span id="waiting-quiz-title"></span></p>
-      <p>Host: <span id="waiting-quiz-host"></span></p>
+      <div class="form-group">
+        <label for="quiz-code-input">Quiz code</label>
+        <input
+          id="quiz-code-input"
+          class="full"
+          type="text"
+          maxlength="5"
+          placeholder="e.g. 12345"
+        />
+      </div>
+
+      <!-- Message area (errors/info) -->
+      <div id="join-message" class="message"></div>
+
+      <button id="btn-join-quiz" class="primary">
+        Join quiz
+      </button>
+    </section>
+
+    <!-- Waiting lobby (hidden initially) -->
+    <section id="waiting-section" class="section-card hidden" style="margin-top:16px;">
+      <h2 style="margin-bottom:6px;">Waiting for host</h2>
+      <p class="hint">
+        You have joined the quiz. Stay on this screen until the host starts the round.
+      </p>
+
+      <div class="stats-row" style="margin-top:10px;">
+        <div class="stat-card">
+          <span class="stat-label">Quiz title</span>
+          <span class="stat-value" id="waiting-quiz-title">
+            Loading...
+          </span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Hosted by</span>
+          <span class="stat-value" id="waiting-quiz-host">
+            -
+          </span>
+        </div>
+      </div>
+
+      <p class="hint" style="margin-top:10px;">
+        This page will automatically move to the question screen when the host starts the quiz.
+      </p>
     </section>
   </div>
+
   <script src="api.js"></script>
   <script src="join.js"></script>
 </body>

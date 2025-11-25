@@ -2,46 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Host Quiz</title>
+  <title>QuizMaster · Host a Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Host a Quiz</h1>
-    <a href="index.html">&larr; Back Home</a>
+    <!-- Top header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Create and host a new live quiz session
+        </p>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="window.location.href='index.html'" class="secondary">
+          Back to dashboard
+        </button>
+      </div>
+    </header>
 
-    <section>
-      <h2>Quiz Settings</h2>
-      <input id="quiz-title" placeholder="Quiz Title" />
-      <label>
-        Time Mode:
-        <select id="time-mode">
-          <option value="per_quiz">Total time for quiz</option>
-          <option value="per_question">Time per question</option>
+    <!-- Status / info bar -->
+    <div class="status-bar">
+      <span>Configure quiz settings, add questions and then generate a join code.</span>
+      <span style="font-size:0.85rem; color:#9ca3af;">Host view</span>
+    </div>
+
+    <!-- Quiz configuration block -->
+    <section class="section-card">
+      <h2 style="margin-bottom:6px;">Quiz settings</h2>
+      <p class="hint" style="margin-bottom:12px;">
+        Set a title and timing rules for this quiz session.
+      </p>
+
+      <div class="form-group">
+        <label for="quiz-title">Quiz title</label>
+        <input
+          id="quiz-title"
+          class="full"
+          type="text"
+          placeholder="e.g. SDC General Quiz Round 1"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="time-mode">Time mode</label>
+        <select id="time-mode" class="full">
+          <option value="per_quiz">Single timer for entire quiz</option>
+          <option value="per_question">Timer per question</option>
         </select>
-      </label>
-      <label>
-        Time Limit (seconds):
-        <input id="time-limit" type="number" value="60" />
-      </label>
+      </div>
+
+      <div class="form-group">
+        <label for="time-limit">Time limit (seconds)</label>
+        <input
+          id="time-limit"
+          class="full"
+          type="number"
+          min="10"
+          value="60"
+        />
+        <p class="hint">Applies per quiz or per question based on the selected mode.</p>
+      </div>
     </section>
 
-    <section>
-      <h2>Questions</h2>
-      <div id="questions-container"></div>
-      <button id="btn-add-question">Add Question</button>
+    <!-- Questions builder block -->
+    <section class="section-card" style="margin-top:16px;">
+      <h2 style="margin-bottom:6px;">Questions</h2>
+      <p class="hint">
+        Add your questions, options, and mark one or more correct answers. Use the buttons to manage questions.
+      </p>
+
+      <!-- Dynamic questions injected by host.js -->
+      <div id="questions-container" class="questions-container" style="margin-top:12px;">
+        <!-- .question-block elements will be rendered here by JS -->
+      </div>
+
+      <div class="footer-actions" style="margin-top:10px;">
+        <button id="btn-add-question" class="secondary">
+          + Add question
+        </button>
+      </div>
     </section>
 
-    <button id="btn-create-quiz" class="primary">Create Quiz</button>
-    <p id="host-message" class="message"></p>
+    <!-- Create quiz + code section -->
+    <section class="section-card" style="margin-top:16px;">
+      <div class="footer-actions" style="justify-content:space-between; flex-wrap:wrap;">
+        <div style="flex:1; min-width:220px; max-width:420px;">
+          <div id="host-message" class="message"></div>
+        </div>
+        <button id="btn-create-quiz" class="primary">
+          Create quiz & generate code
+        </button>
+      </div>
 
-    <section id="code-section" class="hidden">
-      <h2>Quiz Code</h2>
-      <p>Your quiz code: <strong id="quiz-code"></strong></p>
-      <p>Share this 5-digit code with players so they can join.</p>
-      <a id="host-dashboard-link" href="#">Go to Host Dashboard</a>
+      <div id="code-section" class="section-card hidden" style="margin-top:14px;">
+        <h3 style="margin-bottom:6px;">Quiz ready</h3>
+        <p class="hint">
+          Share this code with participants. They can join from the Join page.
+        </p>
+        <p style="margin-top:8px; font-size:1.1rem;">
+          Quiz code:
+          <strong id="quiz-code">-----</strong>
+        </p>
+        <p class="hint" style="margin-top:8px;">
+          As the host, you can manage players and start the quiz from the host dashboard.
+        </p>
+        <p style="margin-top:8px;">
+          <a id="host-dashboard-link" href="#">
+            Open host dashboard for this quiz →
+          </a>
+        </p>
+      </div>
     </section>
   </div>
+
   <script src="api.js"></script>
   <script src="host.js"></script>
 </body>

@@ -2,49 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Host Dashboard</title>
+  <title>QuizMaster · Host Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <div class="page-header">
-      <div>
-        <h1 class="app-title">QuizMaster</h1>
-        <h2>Host Dashboard</h2>
+    <!-- Header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Host dashboard · Monitor players and start the quiz
+        </p>
       </div>
-      <a href="index.html">&larr; Back to Home</a>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="window.location.href='index.html'" class="secondary">
+          Back to dashboard
+        </button>
+      </div>
+    </header>
+
+    <!-- Status / quiz info -->
+    <div class="status-bar">
+      <span>
+        Quiz code:
+        <strong id="dash-code">-----</strong>
+      </span>
+      <span style="font-size:0.85rem; color:#9ca3af;">
+        Status:
+        <strong id="dash-status">Loading...</strong>
+      </span>
     </div>
 
-    <div class="stats-row">
-      <div class="stat-card">
-        <span class="stat-label">Quiz Code</span>
-        <span class="stat-value" id="dash-code"></span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Players</span>
-        <span class="stat-value" id="dash-player-count">0</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Status</span>
-        <span class="stat-value" id="dash-status">Lobby</span>
-      </div>
-    </div>
-
+    <!-- Main dashboard content -->
     <section class="section-card">
-      <h2>Quiz Details</h2>
-      <p><strong>Title:</strong> <span id="dash-title"></span></p>
-    </section>
+      <!-- Message / errors -->
+      <div id="dash-message" class="message"></div>
 
-    <section class="section-card">
-      <h2>Players Joined</h2>
-      <ul id="players-list" class="pill-list"></ul>
-    </section>
+      <!-- Quiz title & host info -->
+      <div class="stats-row" style="margin-top:6px;">
+        <div class="stat-card">
+          <span class="stat-label">Quiz title</span>
+          <span class="stat-value" id="dash-title">
+            Loading...
+          </span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Players joined</span>
+          <span class="stat-value" id="dash-player-count">
+            0
+          </span>
+        </div>
+      </div>
 
-    <div class="footer-actions">
-      <button id="btn-start-quiz" class="primary">Start Quiz</button>
-      <p id="dash-message" class="message"></p>
-    </div>
+      <!-- Players list -->
+      <div class="section-card" style="margin-top:14px;">
+        <h3 style="margin-bottom:6px;">Connected players</h3>
+        <p class="hint" style="margin-bottom:10px;">
+          This list refreshes automatically as new players join with the quiz code.
+        </p>
+
+        <ul id="players-list" style="list-style:none; padding-left:0; margin:0;">
+          <!-- host_dashboard.js will populate <li> items -->
+        </ul>
+      </div>
+
+      <!-- Start quiz button -->
+      <div class="footer-actions" style="margin-top:16px; justify-content:flex-end;">
+        <button id="btn-start-quiz" class="primary">
+          Start quiz
+        </button>
+      </div>
+    </section>
   </div>
+
   <script src="api.js"></script>
   <script src="host_dashboard.js"></script>
 </body>

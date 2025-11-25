@@ -2,27 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Play Quiz</title>
+  <title>QuizMaster · Live Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1 id="play-quiz-title">Quiz</h1>
-    <a href="index.html">&larr; Exit</a>
+    <!-- Header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Live question view · Answer before the timer runs out
+        </p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+        <div id="timer-display" style="font-size:1rem; font-weight:600;">
+          Time: 0s
+        </div>
+        <div id="question-progress" class="hint" style="margin:0;">
+          Question -
+        </div>
+      </div>
+    </header>
 
+    <!-- Status bar with quiz title -->
     <div class="status-bar">
-      <span id="timer-display">Time: 0s</span>
-      <span id="question-progress"></span>
+      <span id="play-quiz-title">Loading quiz...</span>
+      <span style="font-size:0.85rem; color:#9ca3af;">Answer with care · Multiple selections allowed if needed</span>
     </div>
 
-    <section id="question-section">
-      <h2 id="question-text"></h2>
-      <div id="options-container"></div>
-      <button id="btn-next" class="primary">Next</button>
-    </section>
+    <!-- Main question area -->
+    <section class="section-card">
+      <!-- Message area (errors/info) -->
+      <div id="play-message" class="message"></div>
 
-    <p id="play-message" class="message"></p>
+      <!-- Question text -->
+      <div style="margin-top:4px;">
+        <h2 id="question-text" style="margin-bottom:8px;">
+          Loading question...
+        </h2>
+      </div>
+
+      <!-- Options -->
+      <div id="options-container" class="options-container">
+        <!-- play.js will inject .option-item labels with checkboxes here -->
+      </div>
+
+      <!-- Next / submit button -->
+      <div class="footer-actions" style="margin-top:16px; justify-content:flex-end;">
+        <button id="btn-next" class="primary">
+          Next
+        </button>
+      </div>
+    </section>
   </div>
+
   <script src="api.js"></script>
   <script src="play.js"></script>
 </body>

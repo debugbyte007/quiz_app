@@ -2,30 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz App - Register</title>
+  <title>QuizMaster · Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Make sure filename matches your CSS: style.css -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="auth-wrapper">
     <div class="auth-card">
-      <h1 class="app-title">QuizMaster</h1>
-      <h2>Create account</h2>
-      <p class="subtext">Register to start hosting or playing quizzes.</p>
-
-      <div class="form-group">
-        <label>Username</label>
-        <input id="reg-username" placeholder="Choose a username" />
+      <!-- Top brand row -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div>
+          <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+          <p class="subtext" style="text-align:left; margin-bottom:0;">
+            Event quiz portal · Student Development Cell
+          </p>
+        </div>
+        <div
+          style="
+            width:40px;
+            height:40px;
+            border-radius:999px;
+            background:radial-gradient(circle at 30% 0, #e5e7eb, #4f46e5);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:18px;
+            color:#020617;
+          "
+        >
+          Q
+        </div>
       </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input id="reg-password" type="password" placeholder="Create a password" />
-      </div>
-      <button id="btn-register" class="primary full">Register</button>
-      <p id="reg-message" class="message"></p>
 
-      <p class="switch-link">Already have an account? <a href="login.html">Login</a></p>
+      <!-- Title and description -->
+      <div style="margin-bottom:16px;">
+        <h2 style="margin-bottom:4px;">Register</h2>
+        <p class="hint">
+          Create your account to participate in live QuizMaster events.
+        </p>
+      </div>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label for="reg-username">Username</label>
+        <input
+          id="reg-username"
+          class="full"
+          type="text"
+          placeholder="Choose a username"
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="reg-password">Password</label>
+        <input
+          id="reg-password"
+          class="full"
+          type="password"
+          placeholder="Create a password"
+        />
+      </div>
+
+      <!-- Message area (hidden when empty via .message:empty) -->
+      <div id="reg-message" class="message"></div>
+
+      <!-- Register button -->
+      <button id="btn-register" class="primary full">
+        Register
+      </button>
+
+      <!-- Bottom link -->
+      <p class="switch-link" style="margin-top:10px;">
+        Already registered?
+        <a href="login.html">Back to login</a>.
+      </p>
     </div>
   </div>
+
   <script src="api.js"></script>
   <script src="register.js"></script>
 </body>

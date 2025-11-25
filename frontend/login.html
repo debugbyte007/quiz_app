@@ -2,30 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz App - Login</title>
+  <title>QuizMaster · Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Make sure this matches your actual CSS filename -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="auth-wrapper">
     <div class="auth-card">
-      <h1 class="app-title">QuizMaster</h1>
-      <h2>Welcome back</h2>
-      <p class="subtext">Sign in to host or join live quizzes.</p>
-
-      <div class="form-group">
-        <label>Username</label>
-        <input id="login-username" placeholder="Enter username" />
+      <!-- Top brand row -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div>
+          <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+          <p class="subtext" style="text-align:left; margin-bottom:0;">
+            Event quiz portal · Student Development Cell
+          </p>
+        </div>
+        <div
+          style="
+            width:40px;
+            height:40px;
+            border-radius:999px;
+            background:radial-gradient(circle at 30% 0, #e5e7eb, #4f46e5);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:18px;
+            color:#020617;
+          "
+        >
+          Q
+        </div>
       </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input id="login-password" type="password" placeholder="Enter password" />
-      </div>
-      <button id="btn-login" class="primary full">Login</button>
-      <p id="login-message" class="message"></p>
 
-      <p class="switch-link">New here? <a href="register.html">Create an account</a></p>
+      <!-- Title and description -->
+      <div style="margin-bottom:16px;">
+        <h2 style="margin-bottom:4px;">Sign in</h2>
+        <p class="hint">
+          Use your event credentials to host or join live quizzes.
+        </p>
+      </div>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input
+          id="login-username"
+          class="full"
+          type="text"
+          placeholder="e.g. Admin"
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input
+          id="login-password"
+          class="full"
+          type="password"
+          placeholder="Your password"
+        />
+      </div>
+
+      <!-- Error/info message (hidden when empty via CSS .message:empty) -->
+      <div id="login-message" class="message"></div>
+
+      <!-- Login button -->
+      <button id="btn-login" class="primary full">
+        Login
+      </button>
+
+      <!-- Bottom small text -->
+      <p class="switch-link" style="margin-top:10px;">
+        Don’t have an account yet?
+        <a href="register.html">Create one here</a>.
+      </p>
     </div>
   </div>
+
   <script src="api.js"></script>
   <script src="login.js"></script>
 </body>

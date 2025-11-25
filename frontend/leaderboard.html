@@ -2,35 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Leaderboard</title>
+  <title>QuizMaster · Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Leaderboard</h1>
-    <a href="index.html">&larr; Back Home</a>
+    <!-- Header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Leaderboard · Rankings for a specific quiz code
+        </p>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="window.location.href='index.html'" class="secondary">
+          Back to dashboard
+        </button>
+      </div>
+    </header>
 
-    <label>
-      Quiz Code:
-      <input id="lb-code" maxlength="5" />
-    </label>
-    <button id="btn-load-lb" class="primary">Load Leaderboard</button>
+    <!-- Info bar -->
+    <div class="status-bar">
+      <span>Enter a 5-digit quiz code to view its leaderboard.</span>
+      <span style="font-size:0.85rem; color:#9ca3af;">Host or participants can use this view</span>
+    </div>
 
-    <table id="lb-table" class="hidden">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Username</th>
-          <th>Correct</th>
-          <th>Time (s)</th>
-          <th>Points</th>
-        </tr>
-      </thead>
-      <tbody id="lb-body"></tbody>
-    </table>
+    <!-- Code input + load button -->
+    <section class="section-card">
+      <h2 style="margin-bottom:8px;">Load leaderboard</h2>
+      <p class="hint" style="margin-bottom:10px;">
+        Paste the quiz code you received from the host. Some links may pre-fill this automatically.
+      </p>
 
-    <p id="lb-message" class="message"></p>
+      <div class="form-group">
+        <label for="lb-code">Quiz code</label>
+        <input
+          id="lb-code"
+          class="full"
+          type="text"
+          maxlength="5"
+          placeholder="e.g. 12345"
+        />
+      </div>
+
+      <!-- Message area for errors/info -->
+      <div id="lb-message" class="message"></div>
+
+      <button id="btn-load-lb" class="primary">
+        Show leaderboard
+      </button>
+    </section>
+
+    <!-- Table section -->
+    <section class="section-card" style="margin-top:16px;">
+      <h2 style="margin-bottom:8px;">Rankings</h2>
+      <p class="hint" style="margin-bottom:10px;">
+        Participants are ordered by number of correct answers, then by total time taken.
+      </p>
+
+      <div class="table-wrapper">
+        <table id="lb-table" class="table hidden">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Username</th>
+              <th>Score</th>
+              <th>Total time (s)</th>
+              <th>Total points</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body">
+            <!-- leaderboard.js will inject rows here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
+
   <script src="api.js"></script>
   <script src="leaderboard.js"></script>
 </body>

@@ -2,26 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz Result</title>
+  <title>QuizMaster · Results</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Congratulations!</h1>
-    <p>Your quiz is complete.</p>
+    <!-- Header -->
+    <header class="page-header">
+      <div class="title-block">
+        <div class="app-title" style="text-align:left; margin-bottom:4px;">QuizMaster</div>
+        <p class="subtext" style="text-align:left; margin-bottom:0;">
+          Final results · Summary of your performance
+        </p>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onclick="window.location.href='index.html'" class="secondary">
+          Back to dashboard
+        </button>
+      </div>
+    </header>
 
-    <h2>Summary</h2>
-    <p>Total Points: <span id="result-points"></span></p>
-    <p>Correct Answers: <span id="result-correct"></span> / <span id="result-total"></span></p>
-    <p>Total Time: <span id="result-time"></span> seconds</p>
+    <!-- Status -->
+    <div class="status-bar">
+      <span>Thanks for participating!</span>
+      <span style="font-size:0.85rem; color:#9ca3af;">See your score and detailed breakdown below</span>
+    </div>
 
-    <h3>Details</h3>
-    <div id="result-details"></div>
+    <!-- Score summary -->
+    <section class="section-card">
+      <h2 style="margin-bottom:8px;">Your score</h2>
 
-    <a id="leaderboard-link" href="#">View Leaderboard</a>
-    <br />
-    <a href="index.html">Back to Home</a>
+      <div class="stats-row" style="margin-top:8px;">
+        <div class="stat-card">
+          <span class="stat-label">Total points</span>
+          <span class="stat-value" id="result-points">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Correct answers</span>
+          <span class="stat-value">
+            <span id="result-correct">0</span>/<span id="result-total">0</span>
+          </span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total time (s)</span>
+          <span class="stat-value" id="result-time">0</span>
+        </div>
+      </div>
+
+      <div class="footer-actions" style="margin-top:14px; justify-content:space-between; flex-wrap:wrap;">
+        <p class="hint" style="margin:0;">
+          You can review each question and see which options were correct.
+        </p>
+        <a id="leaderboard-link" href="#" class="hint" style="font-size:0.9rem;">
+          View leaderboard for this quiz →
+        </a>
+      </div>
+    </section>
+
+    <!-- Detailed breakdown -->
+    <section class="section-card" style="margin-top:16px;">
+      <h2 style="margin-bottom:8px;">Question breakdown</h2>
+      <p class="hint" style="margin-bottom:10px;">
+        Each question shows your selected answers, the correct answers, and points gained.
+      </p>
+
+      <div id="result-details">
+        <!-- final.js will inject .result-item blocks here -->
+      </div>
+    </section>
   </div>
+
   <script src="api.js"></script>
   <script src="final.js"></script>
 </body>
