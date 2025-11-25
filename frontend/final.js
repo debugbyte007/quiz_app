@@ -1,7 +1,4 @@
-function $(id) {
-  return document.getElementById(id);
-}
-
+// final.js
 function getQueryParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
@@ -16,6 +13,7 @@ function initFinal() {
     $("result-time").textContent = "0";
     return;
   }
+
   const result = JSON.parse(raw);
   $("result-points").textContent = result.total_points;
   $("result-correct").textContent = result.correct_count;

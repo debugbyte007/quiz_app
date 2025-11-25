@@ -1,22 +1,4 @@
-const API_BASE = "https://quiz-app-sdc.onrender.com/api";
-
-function $(id) {
-  return document.getElementById(id);
-}
-
-async function apiRequest(path, method = "GET", body) {
-  const opts = {
-    method,
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(`${API_BASE}${path}`, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
-}
-
+// host.js
 function renderQuestions(questions) {
   const container = $("questions-container");
   container.innerHTML = "";
@@ -53,7 +35,7 @@ function renderQuestions(questions) {
 function getQuestionsFromDOM() {
   const blocks = document.querySelectorAll(".question-block");
   const questions = [];
-  blocks.forEach((block, qi) => {
+  blocks.forEach((block) => {
     const text = block.querySelector(".q-text").value.trim();
     const points = parseInt(block.querySelector(".q-points").value || "1", 10);
     const opts = block.querySelectorAll(".opt-text");
@@ -103,7 +85,9 @@ async function initHost() {
       const oi = parseInt(e.target.getAttribute("data-o"), 10);
       questions = getQuestionsFromDOM();
       questions[qi].options.splice(oi, 1);
-      questions[qi].correct_indices = questions[qi].correct_indices.filter((x) => x !== oi).map((x) => (x > oi ? x - 1 : x));
+      questions[qi].correct_indices = questions[qi].correct_indices
+        .filter((x) => x !== oi)
+        .map((x) => (x > oi ? x - 1 : x));
       renderQuestions(questions);
     }
     if (e.target.classList.contains("btn-remove-question")) {

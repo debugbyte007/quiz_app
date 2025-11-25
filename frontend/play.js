@@ -1,22 +1,4 @@
-const API_BASE = "https://quiz-app-sdc.onrender.com/api";
-
-function $(id) {
-  return document.getElementById(id);
-}
-
-async function apiRequest(path, method = "GET", body) {
-  const opts = {
-    method,
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(`${API_BASE}${path}`, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
-}
-
+// play.js
 function getQueryParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
@@ -32,8 +14,10 @@ let finished = false;
 function renderQuestion() {
   const q = quiz.questions[currentIndex];
   if (!q) return;
+
   $("question-text").textContent = q.text;
   $("question-progress").textContent = `Question ${currentIndex + 1} of ${quiz.questions.length}`;
+
   const container = $("options-container");
   container.innerHTML = "";
 
@@ -47,15 +31,20 @@ function renderQuestion() {
     input.type = "checkbox";
     input.value = idx;
     if (selected.includes(idx)) input.checked = true;
+
     input.onchange = () => {
-      const a = answers.find((x) => x.index === currentIndex) || { index: currentIndex, selected: [] };
-      if (!answers.includes(a)) answers.push(a);
+      let a = answers.find((x) => x.index === currentIndex);
+      if (!a) {
+        a = { index: currentIndex, selected: [] };
+        answers.push(a);
+      }
       if (input.checked) {
         if (!a.selected.includes(idx)) a.selected.push(idx);
       } else {
         a.selected = a.selected.filter((v) => v !== idx);
       }
     };
+
     label.appendChild(input);
     label.appendChild(document.createTextNode(opt));
     container.appendChild(label);
@@ -97,6 +86,8 @@ async function initPlay() {
   intervalId = setInterval(() => {
     timer += 1;
     $("timer-display").textContent = `Time: ${timer}s`;
+
+    // You can change this logic if per-question vs per-quiz differs
     if (quiz.time_mode === "per_quiz" && timer >= quiz.time_limit) {
       submitQuiz(code);
     }

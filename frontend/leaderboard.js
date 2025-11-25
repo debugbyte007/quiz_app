@@ -1,16 +1,4 @@
-const API_BASE = "https://quiz-app-sdc.onrender.com/api";
-
-function $(id) {
-  return document.getElementById(id);
-}
-
-async function apiRequest(path) {
-  const res = await fetch(`${API_BASE}${path}`, { credentials: "include" });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
-}
-
+// leaderboard.js
 function getQueryParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);

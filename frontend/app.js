@@ -1,22 +1,4 @@
-const API_BASE = "https://quiz-app-sdc.onrender.com/api";
-
-async function apiRequest(path, method = "GET", body) {
-  const opts = {
-    method,
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(`${API_BASE}${path}`, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
-}
-
-function $(id) {
-  return document.getElementById(id);
-}
-
+// app.js
 async function init() {
   const welcomeSection = $("welcome-section");
   const homeMessage = $("home-message");
@@ -28,14 +10,21 @@ async function init() {
       welcomeSection.classList.remove("hidden");
       if (loadingSection) loadingSection.classList.add("hidden");
       $("welcome-text").textContent = `Welcome, ${me.username}`;
+
       const storedName = localStorage.getItem("quiz_display_name") || "";
-      if (storedName && $("display-name")) $("display-name").value = storedName;
+      if (storedName && $("display-name")) {
+        $("display-name").value = storedName;
+      }
     } else {
       // Not logged in, send to login screen
       window.location.href = "login.html";
       return;
     }
-  } catch (_) {}
+  } catch (_) {
+    // If /me fails, treat as not logged in
+    window.location.href = "login.html";
+    return;
+  }
 
   if ($("btn-save-name")) {
     $("btn-save-name").onclick = () => {
@@ -70,7 +59,11 @@ async function init() {
 
   if ($("btn-logout")) {
     $("btn-logout").onclick = async () => {
-      await apiRequest("/logout", "POST");
+      try {
+        await apiRequest("/logout", "POST");
+      } catch (_) {
+        // ignore errors on logout
+      }
       window.location.reload();
     };
   }
