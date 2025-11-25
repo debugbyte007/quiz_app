@@ -7,10 +7,6 @@ import string
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
-app.secret_key = "change-this-secret-key"
-CORS(app, supports_credentials=True)
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 USERS_FILE = os.path.join(DATA_DIR, "users.json")
@@ -21,9 +17,34 @@ FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
+app = Flask(__name__)
+# For production, set this via environment variable on Render
+app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret-key")
+
+# ✅ CORS: allow your Netlify frontend + local dev, with credentials
+CORS(
+    app,
+    supports_credentials=True,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "https://quiz-app-sdc.netlify.app",  # your Netlify URL
+                "http://localhost:5500",             # optional: local testing (Live Server)
+            ]
+        }
+    },
+)
+
+# ✅ Cookies: allow cross-site cookies over HTTPS
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,
+)
+
 
 @app.route("/")
 def root():
+    # default to login page
     return send_from_directory(FRONTEND_DIR, "login.html")
 
 
@@ -80,6 +101,8 @@ def _generate_code(length=5):
             return code
 
 
+# ---------- AUTH ----------
+
 @app.route("/api/register", methods=["POST"])
 def register():
     data = request.json or {}
@@ -99,7 +122,10 @@ def register():
     }
     users["users"].append(user)
     _save_users(users)
+
+    # log them in immediately after registration
     session["username"] = username
+
     return jsonify({"message": "Registered successfully", "username": username})
 
 
@@ -108,11 +134,15 @@ def login():
     data = request.json or {}
     username = data.get("username", "").strip()
     password = data.get("password", "")
+
     users = _get_users()
     user = next((u for u in users["users"] if u["username"].lower() == username.lower()), None)
+
     if not user or not check_password_hash(user["password_hash"], password):
         return jsonify({"error": "Invalid username or password"}), 401
+
     session["username"] = user["username"]
+
     return jsonify({"message": "Logged in", "username": user["username"]})
 
 
@@ -127,8 +157,10 @@ def me():
     username = session.get("username")
     if not username:
         return jsonify({"authenticated": False}), 200
-    return jsonify({"authenticated": True, "username": username})
+    return jsonify({"authenticated": True, "username": username}), 200
 
+
+# ---------- QUIZ CREATION & MANAGEMENT ----------
 
 @app.route("/api/quizzes", methods=["POST"])
 def create_quiz():
@@ -220,6 +252,7 @@ def join_quiz(code):
     quizzes, quiz = _find_quiz_by_code(code)
     if not quiz:
         return jsonify({"error": "Quiz not found"}), 404
+
     # Allow joining when quiz is in lobby or already running; block only when ended
     if quiz["status"] == "ended":
         return jsonify({"error": "Quiz has already ended"}), 400
@@ -332,4 +365,5 @@ def history():
 
 
 if __name__ == "__main__":
+    # Local dev: you can still run this directly
     app.run(host="0.0.0.0", port=5001, debug=True)
