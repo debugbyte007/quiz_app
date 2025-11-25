@@ -1,4 +1,10 @@
 // app.js
+if (typeof $ === "undefined") {
+  function $(id) {
+    return document.getElementById(id);
+  }
+}
+
 async function init() {
   const welcomeSection = $("welcome-section");
   const homeMessage = $("home-message");
