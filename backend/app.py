@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 import os
 import json
@@ -17,7 +17,19 @@ USERS_FILE = os.path.join(DATA_DIR, "users.json")
 QUIZZES_FILE = os.path.join(DATA_DIR, "quizzes.json")
 RESULTS_FILE = os.path.join(DATA_DIR, "results.json")
 
+FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
+
 os.makedirs(DATA_DIR, exist_ok=True)
+
+
+@app.route("/")
+def root():
+    return send_from_directory(FRONTEND_DIR, "login.html")
+
+
+@app.route("/home")
+def home_page():
+    return send_from_directory(FRONTEND_DIR, "index.html")
 
 
 def _read_json(path, default):

@@ -1,4 +1,4 @@
-const API_BASE = "https://quiz-app-lnof.onrender.com/api";
+const API_BASE = "/api";
 
 function $(id) { return document.getElementById(id); }
 
