@@ -1,21 +1,14 @@
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 import os
-import json
 import random
 import string
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from db import users_collection, quizzes_collection, results_collection
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-USERS_FILE = os.path.join(DATA_DIR, "users.json")
-QUIZZES_FILE = os.path.join(DATA_DIR, "quizzes.json")
-RESULTS_FILE = os.path.join(DATA_DIR, "results.json")
-
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
-
-os.makedirs(DATA_DIR, exist_ok=True)
 
 app = Flask(__name__)
 # For production, set this via environment variable on Render
@@ -53,51 +46,11 @@ def home_page():
     return send_from_directory(FRONTEND_DIR, "index.html")
 
 
-def _read_json(path, default):
-    if not os.path.exists(path):
-        return default
-    with open(path, "r", encoding="utf-8") as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            return default
-
-
-def _write_json(path, data):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
-def _get_users():
-    return _read_json(USERS_FILE, {"users": []})
-
-
-def _save_users(data):
-    _write_json(USERS_FILE, data)
-
-
-def _get_quizzes():
-    return _read_json(QUIZZES_FILE, {"quizzes": []})
-
-
-def _save_quizzes(data):
-    _write_json(QUIZZES_FILE, data)
-
-
-def _get_results():
-    return _read_json(RESULTS_FILE, {"results": []})
-
-
-def _save_results(data):
-    _write_json(RESULTS_FILE, data)
-
-
 def _generate_code(length=5):
     chars = string.digits
-    existing = {q["code"] for q in _get_quizzes()["quizzes"]}
     while True:
         code = "".join(random.choice(chars) for _ in range(length))
-        if code not in existing:
+        if not quizzes_collection.find_one({"code": code}):
             return code
 
 
@@ -111,8 +64,7 @@ def register():
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
 
-    users = _get_users()
-    if any(u["username"].lower() == username.lower() for u in users["users"]):
+    if users_collection.find_one({"username": {"$regex": f"^{username}$", "$options": "i"}}):
         return jsonify({"error": "Username already exists"}), 400
 
     user = {
@@ -120,10 +72,7 @@ def register():
         "password_hash": generate_password_hash(password),
         "created_at": datetime.utcnow().isoformat() + "Z",
     }
-    users["users"].append(user)
-    _save_users(users)
-
-    # log them in immediately after registration
+    users_collection.insert_one(user)
     session["username"] = username
 
     return jsonify({"message": "Registered successfully", "username": username})
@@ -135,8 +84,7 @@ def login():
     username = data.get("username", "").strip()
     password = data.get("password", "")
 
-    users = _get_users()
-    user = next((u for u in users["users"] if u["username"].lower() == username.lower()), None)
+    user = users_collection.find_one({"username": {"$regex": f"^{username}$", "$options": "i"}})
 
     if not user or not check_password_hash(user["password_hash"], password):
         return jsonify({"error": "Invalid username or password"}), 401
@@ -170,7 +118,7 @@ def create_quiz():
 
     payload = request.json or {}
     title = payload.get("title", "Untitled Quiz").strip() or "Untitled Quiz"
-    time_mode = payload.get("time_mode", "per_quiz")  # per_quiz or per_question
+    time_mode = payload.get("time_mode", "per_quiz")
     time_limit = int(payload.get("time_limit", 60))
     questions = payload.get("questions", [])
 
@@ -181,7 +129,6 @@ def create_quiz():
         if not q.get("text") or not q.get("options"):
             return jsonify({"error": "Each question needs text and options"}), 400
 
-    quizzes = _get_quizzes()
     code = _generate_code()
     quiz = {
         "code": code,
@@ -190,28 +137,19 @@ def create_quiz():
         "time_mode": time_mode,
         "time_limit": time_limit,
         "questions": questions,
-        "status": "lobby",  # lobby, started, ended
+        "status": "lobby",
         "players": [],
         "created_at": datetime.utcnow().isoformat() + "Z",
         "started_at": None,
     }
-    quizzes["quizzes"].append(quiz)
-    _save_quizzes(quizzes)
+    quizzes_collection.insert_one(quiz)
 
     return jsonify({"code": code, "quiz": quiz})
 
 
-def _find_quiz_by_code(code):
-    quizzes = _get_quizzes()
-    for q in quizzes["quizzes"]:
-        if q["code"] == code:
-            return quizzes, q
-    return quizzes, None
-
-
 @app.route("/api/quizzes/<code>", methods=["GET"])
 def get_quiz(code):
-    _, quiz = _find_quiz_by_code(code)
+    quiz = quizzes_collection.find_one({"code": code})
     if not quiz:
         return jsonify({"error": "Quiz not found"}), 404
 
@@ -237,7 +175,7 @@ def get_quiz(code):
 
 @app.route("/api/quizzes/<code>/players", methods=["GET"])
 def get_players(code):
-    _, quiz = _find_quiz_by_code(code)
+    quiz = quizzes_collection.find_one({"code": code})
     if not quiz:
         return jsonify({"error": "Quiz not found"}), 404
     return jsonify({"players": quiz.get("players", [])})
@@ -249,17 +187,16 @@ def join_quiz(code):
     if not username:
         return jsonify({"error": "Authentication required"}), 401
 
-    quizzes, quiz = _find_quiz_by_code(code)
+    quiz = quizzes_collection.find_one({"code": code})
     if not quiz:
         return jsonify({"error": "Quiz not found"}), 404
 
-    # Allow joining when quiz is in lobby or already running; block only when ended
     if quiz["status"] == "ended":
         return jsonify({"error": "Quiz has already ended"}), 400
 
     if username not in quiz["players"]:
+        quizzes_collection.update_one({"code": code}, {"$push": {"players": username}})
         quiz["players"].append(username)
-        _save_quizzes(quizzes)
 
     return jsonify({"message": "Joined quiz", "code": code, "players": quiz["players"]})
 
@@ -270,7 +207,7 @@ def start_quiz(code):
     if not username:
         return jsonify({"error": "Authentication required"}), 401
 
-    quizzes, quiz = _find_quiz_by_code(code)
+    quiz = quizzes_collection.find_one({"code": code})
     if not quiz:
         return jsonify({"error": "Quiz not found"}), 404
     if quiz["host"] != username:
@@ -278,9 +215,10 @@ def start_quiz(code):
     if quiz["status"] != "lobby":
         return jsonify({"error": "Quiz already started or ended"}), 400
 
-    quiz["status"] = "started"
-    quiz["started_at"] = datetime.utcnow().isoformat() + "Z"
-    _save_quizzes(quizzes)
+    quizzes_collection.update_one(
+        {"code": code},
+        {"$set": {"status": "started", "started_at": datetime.utcnow().isoformat() + "Z"}}
+    )
 
     return jsonify({"message": "Quiz started"})
 
@@ -291,7 +229,7 @@ def submit_quiz(code):
     if not username:
         return jsonify({"error": "Authentication required"}), 401
 
-    quizzes, quiz = _find_quiz_by_code(code)
+    quiz = quizzes_collection.find_one({"code": code})
     if not quiz:
         return jsonify({"error": "Quiz not found"}), 404
 
@@ -327,7 +265,6 @@ def submit_quiz(code):
             "points": points,
         })
 
-    results = _get_results()
     entry = {
         "code": code,
         "username": username,
@@ -338,17 +275,14 @@ def submit_quiz(code):
         "submitted_at": datetime.utcnow().isoformat() + "Z",
         "details": detailed,
     }
-    results["results"].append(entry)
-    _save_results(results)
+    results_collection.insert_one(entry)
 
     return jsonify({"result": entry})
 
 
 @app.route("/api/quizzes/<code>/leaderboard", methods=["GET"])
 def leaderboard(code):
-    results = _get_results()
-    filtered = [r for r in results["results"] if r["code"] == code]
-    filtered.sort(key=lambda r: (-r["correct_count"], r["total_time"]))
+    filtered = list(results_collection.find({"code": code}, {"_id": 0}).sort([("correct_count", -1), ("total_time", 1)]))
     for i, r in enumerate(filtered, start=1):
         r["rank"] = i
     return jsonify({"leaderboard": filtered})
@@ -359,8 +293,7 @@ def history():
     username = session.get("username")
     if not username:
         return jsonify({"error": "Authentication required"}), 401
-    results = _get_results()
-    user_results = [r for r in results["results"] if r["username"] == username]
+    user_results = list(results_collection.find({"username": username}, {"_id": 0}))
     return jsonify({"results": user_results})
 
 
