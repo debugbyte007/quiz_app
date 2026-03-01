@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import os
 
+# Use MongoDB Atlas connection string from environment, fall back to localhost
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
 client = MongoClient(MONGO_URI)
 db = client["quiz_app"]
