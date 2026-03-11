@@ -19,7 +19,7 @@ CORS(
     resources={
         r"/api/*": {
             "origins": [
-                "https://quizmasterapp-one.vercel.app",
+                "https://*.vercel.app",,
                 "https://quiz-app-700-users.netlify.app",
                 "http://localhost:5500",
             ]
