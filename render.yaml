@@ -1,34 +1,27 @@
 services:
   - type: web
     name: quiz-app-backend
-    runtime: python3
+    runtime: python
     buildCommand: cd backend && pip install -r requirements.txt
     startCommand: cd backend && gunicorn --config gunicorn.conf.py app:app
-    plan: starter  # Change to 'free' for free tier (has limitations)
-    region: oregon  # Change to your preferred region
-    branch: main
-    rootDir: .
-    envVars:
-      - key: SUPABASE_URL
-        sync: false  # Set this manually in Render dashboard
-      - key: SUPABASE_KEY
-        sync: false  # Set this manually in Render dashboard  
-      - key: SECRET_KEY
-        generateValue: true  # Render will generate a random secret
-      - key: PORT
-        value: 10000
-
-  - type: static
-    name: quiz-app-frontend
-    buildCommand: echo "No build needed for static files"
-    staticPublishPath: ./frontend
     plan: free
     region: oregon
     branch: main
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
+    repo: https://github.com/debugbyte007/quiz_app.git
+    envVars:
+      - key: SUPABASE_URL
+        value: https://prsncomvnxoxbcopqpmq.supabase.co
+      - key: SUPABASE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InByc25jb212bnhveGJjb3BxcG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDEwNjQsImV4cCI6MjA4ODcxNzA2NH0.GpXjFjuzBXFyIztMqPz0PsfX4btF8NZsI1HHQEeBNWI
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PORT
+        value: 10000
+
+  - type: web
+    name: quiz-app-frontend
+    runtime: static
+    buildCommand: echo "No build needed"
+    staticPublishPath: ./frontend
+    branch: main
+    repo: https://github.com/debugbyte007/quiz_app.git
