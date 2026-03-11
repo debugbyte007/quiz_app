@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .test-box {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #333;
+        }
+
+        .success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .error {
+            border-left: 4px solid #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🚀 Supabase Connection Test</h1>
+
+    <div class="test-box">
+        <h3>Test 1: Register User</h3>
+        <button onclick="testRegister()">Register Test User</button>
+        <div id="register-result" class="result"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>Test 2: Login User</h3>
+        <button onclick="testLogin()">Login Test User</button>
+        <div id="login-result" class="result"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>Test 3: Create Quiz</h3>
+        <button onclick="testCreateQuiz()">Create Test Quiz</button>
+        <div id="quiz-result" class="result"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>Test 4: Check Authentication</h3>
+        <button onclick="testAuth()">Check Auth Status</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:5001/api";
+
+        async function apiRequest(path, method = "GET", body) {
+            const opts = {
+                method,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+            };
+
+            if (body) {
+                opts.body = JSON.stringify(body);
+            }
+
+            const res = await fetch(`${API_BASE}${path}`, opts);
+            const data = await res.json().catch(() => ({}));
+
+            return {
+                ok: res.ok,
+                status: res.status,
+                data
+            };
+        }
+
+        async function testRegister() {
+            const result = document.getElementById('register-result');
+            result.innerHTML = "Testing...";
+
+            try {
+                const username = "testuser_" + Date.now();
+                const response = await apiRequest("/register", "POST", {
+                    username: username,
+                    password: "testpass123"
+                });
+
+                if (response.ok) {
+                    result.className = "result success";
+                    result.innerHTML = `✅ Success! User registered: ${username}<br>Response: ${JSON.stringify(response.data)}`;
+                } else {
+                    result.className = "result error";
+                    result.innerHTML = `❌ Error: ${JSON.stringify(response.data)}`;
+                }
+            } catch (error) {
+                result.className = "result error";
+                result.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const result = document.getElementById('login-result');
+            result.innerHTML = "Testing...";
+
+            try {
+                const response = await apiRequest("/login", "POST", {
+                    username: "testuser",
+                    password: "testpass123"
+                });
+
+                if (response.ok) {
+                    result.className = "result success";
+                    result.innerHTML = `✅ Success! Logged in<br>Response: ${JSON.stringify(response.data)}`;
+                } else {
+                    result.className = "result error";
+                    result.innerHTML = `❌ Error: ${JSON.stringify(response.data)}`;
+                }
+            } catch (error) {
+                result.className = "result error";
+                result.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function testCreateQuiz() {
+            const result = document.getElementById('quiz-result');
+            result.innerHTML = "Testing...";
+
+            try {
+                const response = await apiRequest("/quizzes", "POST", {
+                    title: "Test Quiz for 700 Users",
+                    time_mode: "per_quiz",
+                    time_limit: 60,
+                    questions: [{
+                        text: "What is 2+2?",
+                        options: ["3", "4", "5", "6"],
+                        correct_indices: [1],
+                        points: 10
+                    }]
+                });
+
+                if (response.ok) {
+                    result.className = "result success";
+                    result.innerHTML = `✅ Success! Quiz created with code: ${response.data.code}<br>Response: ${JSON.stringify(response.data, null, 2)}`;
+                } else {
+                    result.className = "result error";
+                    result.innerHTML = `❌ Error: ${JSON.stringify(response.data)}`;
+                }
+            } catch (error) {
+                result.className = "result error";
+                result.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function testAuth() {
+            const result = document.getElementById('auth-result');
+            result.innerHTML = "Testing...";
+
+            try {
+                const response = await apiRequest("/me", "GET");
+
+                if (response.ok) {
+                    result.className = "result success";
+                    result.innerHTML = `✅ Auth Status:<br>${JSON.stringify(response.data, null, 2)}`;
+                } else {
+                    result.className = "result error";
+                    result.innerHTML = `❌ Error: ${JSON.stringify(response.data)}`;
+                }
+            } catch (error) {
+                result.className = "result error";
+                result.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+
+</html>
