@@ -19,7 +19,7 @@ CORS(
     resources={
         r"/api/*": {
             "origins": [
-                "https://quiz-app-sdc.netlify.app",
+                "https://quiz-app-700-users.netlify.app",
                 "http://localhost:5500",
             ]
         }
@@ -27,8 +27,8 @@ CORS(
 )
 
 app.config.update(
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=False,
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,
 )
 
 @app.route("/")
