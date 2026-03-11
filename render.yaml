@@ -9,10 +9,6 @@ services:
     branch: main
     repo: https://github.com/debugbyte007/quiz_app.git
     envVars:
-      - key: SUPABASE_URL
-        value: https://prsncomvnxoxbcopqpmq.supabase.co
-      - key: SUPABASE_KEY
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InByc25jb212bnhveGJjb3BxcG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDEwNjQsImV4cCI6MjA4ODcxNzA2NH0.GpXjFjuzBXFyIztMqPz0PsfX4btF8NZsI1HHQEeBNWI
       - key: SECRET_KEY
         generateValue: true
       - key: PORT
