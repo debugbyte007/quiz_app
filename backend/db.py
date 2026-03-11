@@ -7,13 +7,21 @@ load_dotenv()
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
-if SUPABASE_URL and SUPABASE_KEY and SUPABASE_URL != "your_supabase_project_url_here":
-    # Use Supabase for production
-    print("🚀 Using Supabase database for production scaling")
-    from supabase_db import users_collection, quizzes_collection, results_collection
-else:
-    # Use JSON files for local development
-    print("📁 Using JSON files for local development")
+# Try Supabase first, fall back to JSON if it fails
+try:
+    if SUPABASE_URL and SUPABASE_KEY and SUPABASE_URL != "your_supabase_project_url_here":
+        # Test Supabase connection
+        from supabase import create_client
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        # Quick test to see if credentials work
+        supabase.table("users").select("*").limit(1).execute()
+        print("🚀 Using Supabase database for production scaling")
+        from supabase_db import users_collection, quizzes_collection, results_collection
+    else:
+        raise Exception("Supabase credentials not available")
+except Exception as e:
+    # Use JSON files for local development or if Supabase fails
+    print(f"📁 Using JSON files (Supabase error: {str(e)[:50]}...)")
     import json
     from datetime import datetime
 
