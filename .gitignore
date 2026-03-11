@@ -44,3 +44,8 @@ node_modules/
 *.tmp
 *.temp
 .cache/
+
+# CLI tools
+render-cli/
+*.zip
+cli_*.exe
