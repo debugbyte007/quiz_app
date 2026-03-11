@@ -1,5 +1,5 @@
 // api.js
-const API_BASE = "https://quiz-master-app-2vvd.onrender.com/";
+const API_BASE = "https://quiz-master-app-2vwd.onrender.com/api";
 
 function $(id) {
     return document.getElementById(id);
